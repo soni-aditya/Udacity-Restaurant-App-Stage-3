@@ -10,19 +10,19 @@ document.addEventListener("DOMContentLoaded", event => {
 /*
 Adding a service worker if not present
  */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("./restaurant-review-sw.js", { scope: "/" })
-    .then(function(registration) {
-      // console.log("Service Worker Registeration",registration);
-      console.log("Service Worker Registeration");
-    })
-    .catch(function(err) {
-      console.log("Service Worker Registion Error Code :", err);
-    });
-} else {
-  console.log("Service Workers not supported");
-}
+// if ("serviceWorker" in navigator) {
+//   navigator.serviceWorker
+//     .register("./restaurant-review-sw.js", { scope: "/" })
+//     .then(function(registration) {
+//       // console.log("Service Worker Registeration",registration);
+//       console.log("Service Worker Registeration");
+//     })
+//     .catch(function(err) {
+//       console.log("Service Worker Registion Error Code :", err);
+//     });
+// } else {
+//   console.log("Service Workers not supported");
+// }
 /**
  * Initialize leaflet map
  */
@@ -55,6 +55,7 @@ initMap = () => {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
   });
+  launchFeedbackModal();
 };
 
 /**
@@ -137,9 +138,9 @@ fillRestaurantHoursHTML = (
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById("reviews-container");
-  const title = document.createElement("h3");
-  title.innerHTML = "Reviews";
-  container.appendChild(title);
+  // const title = document.createElement("h3");
+  // title.innerHTML = "Reviews";
+  // container.appendChild(title);
 
   if (!reviews) {
     const noReviews = document.createElement("p");
@@ -226,4 +227,33 @@ getParameterByName = (name, url) => {
   if (!results) return null;
   if (!results[2]) return "";
   return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
+launchFeedbackModal = () => {
+  var modal = document.getElementById("feedbackModal");
+  var modalTrigger = document.getElementById("modalTrigger");
+  var span = document.getElementsByClassName("close")[0];
+  var feedbackFormButton = document.getElementById("feedbackFormButton");
+  var rating = document.getElementById("rating");
+  var feedbackContent = document.getElementById("feedbackContent");
+  var userName = document.getElementById("userName");
+  modalTrigger.onclick = function() {
+    modal.style.display = "block";
+  };
+  span.onclick = function() {
+    modal.style.display = "none";
+  };
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+  var restaurantId = getParameterByName('id');
+  ///On form subbmission
+  feedbackFormButton.onclick = function() {
+    var ratingValue = rating.value;
+    var feedback = feedbackContent.value;
+    var user = userName.value;
+    console.log(user);
+  };
 };

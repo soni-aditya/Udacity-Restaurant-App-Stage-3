@@ -1,80 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#3367D6" />
-  <link rel="canonical" href="https://localhost:8000/" />
-  <link rel="manifest" href="/manifest.json">
-  <!-- Normalize.css for better cross-browser consistency -->
-  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <!-- Main CSS file -->
-  <link rel="stylesheet" href="css/styles.css" type="text/css">
-  <link rel="stylesheet" href="css/my_style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
-    crossorigin="" />
-  <title>Restaurant Info</title>
-  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
-  <script src="./node_modules/idb/lib/idb.js"></script>
-</head>
-
-<body class="inside">
-  <!-- Beginning header -->
-  <header>
-    <!-- Beginning nav -->
-    <nav>
-      <h1 id="main_heading" aria-label="Main Heading"><a href="/">Restaurant Reviews</a></h1>
-      <!-- Beginning breadcrumb -->
-      <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
-        <li><a href="/">Home</a></li>
-      </ul>
-      <!-- End breadcrumb -->
-    </nav>
-    <!-- End nav -->
-  </header>
-  <!-- End header -->
-
-  <!-- Beginning main -->
-  <main id="maincontent" aria-label="Main content">
-    <!-- Beginning map -->
-    <section id="map-container" role="contentinfo" aria-label="Section with location info">
-      <div id="map" role="application" aria-label="Map with restaurant locations"></div>
-    </section>
-    <!-- End map -->
-    <!-- Beginning restaurant -->
-    <section id="restaurant-container" role="contentinfo" aria-label="Information about the Restaurant">
-      <h2 id="restaurant-name"></h2>
-      <img id="restaurant-img">
-      <p id="restaurant-cuisine"></p>
-      <p id="restaurant-address"></p>
-      <table id="restaurant-hours"></table>
-    </section>
-    <!-- end restaurant -->
-    <!-- Beginning reviews -->
-    <section id="reviews-container" role="contentinfo" aria-label="People's reviews about the Restaurant">
-      <ul id="reviews-list"></ul>
-    </section>
-    <!-- End reviews -->
-  </main>
-  <!-- End main -->
-
-  <!-- Beginning footer -->
-  <footer id="footer" aria-label="Footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
-  </footer>
-  <!-- End footer -->
-  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
-    crossorigin=""></script>
-  <!-- Beginning scripts -->
-  <!-- Database helpers -->
-  <script type="application/javascript" charset="utf-8" src="js/iDbOperationsHelper.js"></script>
-  <script type="text/javascript" src="js/dbhelper.js"></script>
-  <!-- Main javascript file -->
-  <script type="text/javascript" src="js/restaurant_info.js"></script>
-  <!-- Google Maps -->
-  <!--  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tKbW6A5pQ-eupxI56myUnHLqYCzOjKo&libraries=places&callback=initMap"></script> -->
-  <!-- End scripts -->
-
-</body>
-
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#3367D6" />
+    <link rel="canonical" href="https://localhost:8000/" />
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Normalize.css for better cross-browser consistency -->
+    <link
+      rel="stylesheet"
+      src="//normalize-css.googlecode.com/svn/trunk/normalize.css"
+    />
+    <!-- Main CSS file -->
+    <link rel="stylesheet" href="css/styles.css" type="text/css" />
+    <link rel="stylesheet" href="css/my_style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+      integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+      crossorigin=""
+    />
+    <title>Restaurant Info</title>
+    <link rel="shortcut icon" type="image/png" href="img/favicon.png" />
+    <script src="./node_modules/idb/lib/idb.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+    <style>
+      /*feedback modal style*/
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 200px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 40%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+          0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.5s;
+        animation-name: animatetop;
+        animation-duration: 0.5s;
+      }
+      @-webkit-keyframes animatetop {
+        from {
+          top: -300px;
+          opacity: 0;
+        }
+        to {
+          top: 0;
+          opacity: 1;
+        }
+      }
+      @keyframes animatetop {
+        from {
+          top: -300px;
+          opacity: 0;
+        }
+        to {
+          top: 0;
+          opacity: 1;
+        }
+      }
+      .close {
+        color: #5cb85c;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: #244924;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .modal-header {
+        padding: 2px 0px;
+        background-color: #5cb85c;
+        color: white;
+      }
+      .modal-body {
+        padding: 2px 16px;
+      }
+      /* ---------------------------------------*/
+    </style>
+  </head>
+  <body class="inside">
+    <!-- header -->
+    <header>
+      <nav>
+        <h1 id="main_heading" aria-label="Main Heading">
+          <a href="/">Restaurant Reviews</a>
+        </h1>
+        <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </nav>
+    </header>
+    <!-- content starts here -->
+    <main id="maincontent" aria-label="Main content">
+      <!-- Beginning map -->
+      <section
+        id="map-container"
+        role="contentinfo"
+        aria-label="Section with location info"
+      >
+        <div
+          id="map"
+          role="application"
+          aria-label="Map with restaurant locations"
+        ></div>
+      </section>
+      <!-- Beginning restaurant -->
+      <section
+        id="restaurant-container"
+        role="contentinfo"
+        aria-label="Information about the Restaurant"
+      >
+        <h2 id="restaurant-name"></h2>
+        <img id="restaurant-img" />
+        <p id="restaurant-cuisine"></p>
+        <p id="restaurant-address"></p>
+        <table id="restaurant-hours"></table>
+      </section>
+      <!-- reviews section -->
+      <section
+        id="reviews-container"
+        role="contentinfo"
+        aria-label="People's reviews about the Restaurant"
+      >
+        <h3 style="display:inline">Reviews</h3>
+        &nbsp;&nbsp;&nbsp;
+        <!-- Modal Trigger -->
+        <h3 style="display:inline">
+          <small> <i id="modalTrigger" class="modal_trigger far fa-edit"></i> </small>
+        </h3>
+        <ul id="reviews-list"></ul>
+      </section>
+    </main>
+    <!-- The Review Form Modal -->
+    <div id="feedbackModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close"> <i class="fas fa-times-circle"></i> </span>
+        </div>
+        <div class="modal-body">
+          <div class="form-style-5">
+            <form>
+              <fieldset>
+                <label for="userName">Give a feedback:</label>
+                <input type="text" id="userName" placeholder="Your Name*">
+                <label for="feedbackContent">Give a feedback:</label>
+                <textarea
+                  id="feedbackContent"
+                  placeholder="write here..*"
+                  rows="5"
+                ></textarea>
+                <label for="rating">Rate us:</label>
+                <select id="rating" name="field4">
+                  <optgroup label="out of 5*">
+                    <option value="gaming">5 [Very Good]</option>
+                    <option value="debate">4 [Good]</option>
+                    <option value="boxing">3 [Average]</option>
+                    <option value="reading">2 [Bad]</option>
+                    <option value="fishkeeping">1 [Very Bad]</option>
+                  </optgroup>
+                </select>
+              </fieldset>
+              <input type="button" value="Submit Response" id="feedbackFormButton"/>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer id="footer" aria-label="Footer">
+      Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All
+      Rights Reserved.
+    </footer>
+    <!-- Adding Scripts -->
+    <script
+      src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+      integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+      crossorigin=""
+    ></script>
+    <!-- Database helpers -->
+    <script
+      type="application/javascript"
+      charset="utf-8"
+      src="js/iDbOperationsHelper.js"
+    ></script>
+    <script type="text/javascript" src="js/dbhelper.js"></script>
+    <!-- Main javascript file -->
+    <script type="text/javascript" src="js/restaurant_info.js"></script>
+    <!-- Google Maps -->
+    <!--
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tKbW6A5pQ-eupxI56myUnHLqYCzOjKo&libraries=places&callback=initMap"></script>
+    -->
+    <!-- End scripts -->
+  </body>
 </html>
