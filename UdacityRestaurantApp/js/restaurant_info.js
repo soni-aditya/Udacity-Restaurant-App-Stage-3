@@ -260,6 +260,23 @@ launchFeedbackModal = () => {
     var ratingValue = rating.value;
     var feedback = feedbackContent.value;
     var user = userName.value;
-    console.log(user);
+    var requestPayload = {
+      restaurant_id: restaurantId,
+      name: user,
+      rating: ratingValue,
+      comments: feedback
+    };
+    fetch("http://localhost:1337/reviews/", {
+      method: "post",
+      body: JSON.stringify(requestPayload)
+    }).then(()=>{
+      console.log("Review has been recorded");
+      var dbName = "restaurant-reviews-"+restaurantId;
+      idb.delete(dbName).then(()=>{
+        console.log('IDB Deleted');
+        location.reload();
+      });
+    });
+    
   };
 };
