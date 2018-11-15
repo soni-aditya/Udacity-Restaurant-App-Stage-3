@@ -137,37 +137,28 @@ fillRestaurantHoursHTML = (
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  var restaurantId = getParameterByName('id');
+  var restaurantId = getParameterByName("id");
+
   DBHelper.getReviewForRestaurant((error, reviews) => {
-    console.log('IN HEEEEERR')
-    self.restaurantReviews = reviews;
-    if (!restaurantReviews) {
+    console.log("IN HEEEEERR");
+    if (!reviews) {
       console.error(error);
       return;
+    } else {
+      const container = document.getElementById("reviews-container");
+      if (reviews.length == 0) {
+        const noReviews = document.createElement("p");
+        noReviews.innerHTML = "No reviews yet!";
+        container.appendChild(noReviews);
+        return;
+      }
+      const ul = document.getElementById("reviews-list");
+      reviews.forEach(review => {
+        ul.appendChild(createReviewHTML(review));
+      });
+      container.appendChild(ul);
     }
-    else{
-      console.log(restaurantReviews);
-    }
-    // fillRestaurantHTML();
-    // callback(null, restaurantReviews);
-  },restaurantId);
-
-  const container = document.getElementById("reviews-container");
-  // const title = document.createElement("h3");
-  // title.innerHTML = "Reviews";
-  // container.appendChild(title);
-
-  if (!reviews) {
-    const noReviews = document.createElement("p");
-    noReviews.innerHTML = "No reviews yet!";
-    container.appendChild(noReviews);
-    return;
-  }
-  const ul = document.getElementById("reviews-list");
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
-  });
-  container.appendChild(ul);
+  }, restaurantId);
 };
 
 /**
@@ -201,7 +192,7 @@ createReviewHTML = review => {
   // li.appendChild(name);
 
   const date = document.createElement("p");
-  date.innerHTML = review.date;
+  date.innerHTML = review.createdAt;
   date.className = "date-of-review";
   // li.appendChild(date);
   intro_div.appendChild(name);
@@ -263,7 +254,7 @@ launchFeedbackModal = () => {
       modal.style.display = "none";
     }
   };
-  var restaurantId = getParameterByName('id');
+  var restaurantId = getParameterByName("id");
   ///On form subbmission
   feedbackFormButton.onclick = function() {
     var ratingValue = rating.value;

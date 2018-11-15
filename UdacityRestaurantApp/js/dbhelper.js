@@ -164,7 +164,7 @@ class DBHelper {
    * Getting Reviews for each restaurant
    */
   static getReviewForRestaurant(callback,restaurant_id){
-    // fetch all restaurants with proper error handling.
+    // fetch all reviews with proper error handling.
     ReviewsIDbOperationsHelper.getRestaurantsReviews((error, reviews) => {
       if (error) {
         callback(error, null);
@@ -172,10 +172,10 @@ class DBHelper {
         // console.log('GOT THIS '+reviews.length);
         // const reviews = reviews.find(r => r.id == id);
         if (reviews) {
-          // Got the restaurant
+          // Got the reviews-response
           callback(null, reviews);
         } else {
-          // Restaurant does not exist in the database
+          // reviews does not exist in the database
           callback("No reviews so far !", null);
         }
       }
