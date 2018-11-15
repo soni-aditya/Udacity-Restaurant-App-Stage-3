@@ -137,6 +137,21 @@ fillRestaurantHoursHTML = (
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+  var restaurantId = getParameterByName('id');
+  DBHelper.getReviewForRestaurant((error, reviews) => {
+    console.log('IN HEEEEERR')
+    self.restaurantReviews = reviews;
+    if (!restaurantReviews) {
+      console.error(error);
+      return;
+    }
+    else{
+      console.log(restaurantReviews);
+    }
+    // fillRestaurantHTML();
+    // callback(null, restaurantReviews);
+  },restaurantId);
+
   const container = document.getElementById("reviews-container");
   // const title = document.createElement("h3");
   // title.innerHTML = "Reviews";

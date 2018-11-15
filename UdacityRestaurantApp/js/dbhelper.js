@@ -2,13 +2,13 @@
  * Common database helper functions.
  */
 class DBHelper {
-  /**
-   * Database URL.
-   * Change this to restaurants.json file location on your server.
-   */
-  static get NEW_URL() {
-    return `http://localhost:1337/restaurants`;
-  }
+  // /**
+  //  * Database URL.
+  //  * Change this to restaurants.json file location on your server.
+  //  */
+  // static get NEW_URL() {
+  //   return `http://localhost:1337/restaurants`;
+  // }
   /**
    * Fetch a restaurant by its ID.
    */
@@ -159,5 +159,26 @@ class DBHelper {
     );
     marker.addTo(newMap);
     return marker;
+  }
+  /**
+   * Getting Reviews for each restaurant
+   */
+  static getReviewForRestaurant(callback,restaurant_id){
+    // fetch all restaurants with proper error handling.
+    ReviewsIDbOperationsHelper.getRestaurantsReviews((error, reviews) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        // console.log('GOT THIS '+reviews.length);
+        // const reviews = reviews.find(r => r.id == id);
+        if (reviews) {
+          // Got the restaurant
+          callback(null, reviews);
+        } else {
+          // Restaurant does not exist in the database
+          callback("No reviews so far !", null);
+        }
+      }
+    },restaurant_id);
   }
 }
