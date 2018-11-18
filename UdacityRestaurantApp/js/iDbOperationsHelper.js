@@ -66,7 +66,7 @@ class IDbOperationsHelper {
             );
           });
         }
-        console.log(responseJson);
+        // console.log(responseJson);
         callback(null, responseJson);
       });
   }

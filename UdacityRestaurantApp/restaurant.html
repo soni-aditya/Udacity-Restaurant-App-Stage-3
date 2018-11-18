@@ -132,7 +132,10 @@
         role="contentinfo"
         aria-label="Information about the Restaurant"
       >
-        <h2 id="restaurant-name"></h2>
+        <h2 id="restaurant-name" style="display:inline"></h2>
+        <h1 style="display:inline" id="favourite-icon">
+          <i class="fa-heart" aria-hidden="true" id="is-favourite"></i>
+        </h1>
         <img id="restaurant-img" />
         <p id="restaurant-cuisine"></p>
         <p id="restaurant-address"></p>
@@ -148,7 +151,9 @@
         &nbsp;&nbsp;&nbsp;
         <!-- Modal Trigger -->
         <h3 style="display:inline">
-          <small> <i id="modalTrigger" class="modal_trigger far fa-edit"></i> </small>
+          <small>
+            <i id="modalTrigger" class="modal_trigger far fa-edit"></i>
+          </small>
         </h3>
         <ul id="reviews-list"></ul>
       </section>
@@ -164,7 +169,7 @@
             <form>
               <fieldset>
                 <label for="userName">Give a feedback:</label>
-                <input type="text" id="userName" placeholder="Your Name*">
+                <input type="text" id="userName" placeholder="Your Name*" />
                 <label for="feedbackContent">Give a feedback:</label>
                 <textarea
                   id="feedbackContent"
@@ -182,7 +187,11 @@
                   </optgroup>
                 </select>
               </fieldset>
-              <input type="button" value="Submit Response" id="feedbackFormButton"/>
+              <input
+                type="button"
+                value="Submit Response"
+                id="feedbackFormButton"
+              />
             </form>
           </div>
         </div>

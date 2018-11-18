@@ -88,9 +88,52 @@ fetchRestaurantFromURL = callback => {
 /**
  * Create restaurant HTML and add it to the webpage
  */
+let currentFavouriteStatus = "";
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById("restaurant-name");
   name.innerHTML = restaurant.name;
+
+  let favourite = document.getElementById("is-favourite");
+  if (currentFavouriteStatus == "") {
+    currentFavouriteStatus = restaurant.is_favorite;
+  }
+  console.log('Current Fav Status : '+currentFavouriteStatus);
+  if (currentFavouriteStatus == 'true') {
+    favourite.classList.add("fa");
+  } else {
+    favourite.classList.add("far");
+  }
+
+  favourite.onclick = () => {
+    console.log("INITIALLY : " + restaurant);
+    currentFavouriteStatus =
+      currentFavouriteStatus == "true" ? "false" : "true";
+    var restaurantId = getParameterByName("id");
+    let newFavRequest =
+      "http://localhost:1337/restaurants/" +
+      restaurantId +
+      "/?is_favorite=" +
+      currentFavouriteStatus;
+    console.log(newFavRequest);
+    // Making a PUT request
+    fetch(newFavRequest, {
+      method: "PUT"
+    }).then(response => {
+      console.log("LATER : " + restaurant);
+      if (favourite.classList.contains("far")) {
+        favourite.classList.remove("far");
+        favourite.classList.add("fa");
+      } else {
+        favourite.classList.remove("fa");
+        favourite.classList.add("far");
+      }
+      //Delete iDB and reload the page
+      dbName = "restaurants-data";
+      idb.delete(dbName).then(() => {
+        console.log("IDB Deleted");
+      });
+    });
+  };
 
   const address = document.getElementById("restaurant-address");
   address.innerHTML = restaurant.address;
@@ -140,7 +183,6 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   var restaurantId = getParameterByName("id");
 
   DBHelper.getReviewForRestaurant((error, reviews) => {
-    console.log("IN HEEEEERR");
     if (!reviews) {
       console.error(error);
       return;
@@ -269,14 +311,14 @@ launchFeedbackModal = () => {
     fetch("http://localhost:1337/reviews/", {
       method: "post",
       body: JSON.stringify(requestPayload)
-    }).then(()=>{
+    }).then(() => {
       console.log("Review has been recorded");
-      var dbName = "restaurant-reviews-"+restaurantId;
-      idb.delete(dbName).then(()=>{
-        console.log('IDB Deleted');
+      var dbName = "restaurant-reviews-" + restaurantId;
+      //Delete iDB and reload the page
+      idb.delete(dbName).then(() => {
+        console.log("IDB Deleted");
         location.reload();
       });
     });
-    
   };
 };
