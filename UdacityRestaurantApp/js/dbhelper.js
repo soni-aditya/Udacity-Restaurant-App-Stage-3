@@ -163,22 +163,45 @@ class DBHelper {
   /**
    * Getting Reviews for each restaurant
    */
-  static getReviewForRestaurant(callback,restaurant_id){
+  static getReviewForRestaurant(callback, restaurant_id) {
     // fetch all reviews with proper error handling.
     ReviewsIDbOperationsHelper.getRestaurantsReviews((error, reviews) => {
       if (error) {
         callback(error, null);
       } else {
-        // console.log('GOT THIS '+reviews.length);
-        // const reviews = reviews.find(r => r.id == id);
-        if (reviews) {
-          // Got the reviews-response
-          callback(null, reviews);
-        } else {
-          // reviews does not exist in the database
-          callback("No reviews so far !", null);
+        //Check for network connection
+        if (navigator.onLine) {
+          if (reviews) {
+            // Got the reviews-response
+            callback(null, reviews);
+          } else {
+            // reviews does not exist in the database
+            callback("No reviews so far !", null);
+          }
+        }
+        //If offline, than also consider queued review requests for display
+        else {
+          async function checkForQueuedReviews() {
+            var queuedReviews = await ReviewsQueueIDBHelper.getAllData();
+            var reviewsForThisRestaurant = [];
+            for (var i = 0; i < queuedReviews.length; i++) {
+              var thisRestaurantId = JSON.parse(queuedReviews[i].restaurant_id);
+              if (thisRestaurantId == restaurant_id) {
+                reviewsForThisRestaurant.push(queuedReviews[i]);
+              }
+            }
+            var totalReviews = reviews.concat(reviewsForThisRestaurant);
+            if (totalReviews) {
+              // Got the reviews-response
+              callback(null, totalReviews);
+            } else {
+              // reviews does not exist in the database
+              callback("No reviews so far !", null);
+            }
+          }
+          checkForQueuedReviews();
         }
       }
-    },restaurant_id);
+    }, restaurant_id);
   }
 }

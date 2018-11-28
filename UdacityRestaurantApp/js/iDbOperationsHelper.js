@@ -113,7 +113,6 @@ class IDbOperationsHelper {
   }
 }
 
-
 // let fetchStatus = 0;
 class ReviewsIDbOperationsHelper {
   static checkForIDbSupport() {
@@ -161,7 +160,7 @@ class ReviewsIDbOperationsHelper {
     callback,
     restaurant_id
   ) {
-    let url = "http://localhost:1337/reviews/?restaurant_id="+restaurant_id;
+    let url = "http://localhost:1337/reviews/?restaurant_id=" + restaurant_id;
     fetch(url)
       .then(function(response) {
         return response.json();
@@ -185,11 +184,11 @@ class ReviewsIDbOperationsHelper {
       });
   }
   //
-  static getRestaurantsReviews(callback,restaurant_id) {
-    const idbName = "restaurant-reviews-"+restaurant_id;
+  static getRestaurantsReviews(callback, restaurant_id) {
+    const idbName = "restaurant-reviews-" + restaurant_id;
     const dbVersion = 1;
-    const objectStoreNameString = "restaurant-reviews-"+restaurant_id;
-    const transactionNameString = "restaurant-reviews-"+restaurant_id;
+    const objectStoreNameString = "restaurant-reviews-" + restaurant_id;
+    const transactionNameString = "restaurant-reviews-" + restaurant_id;
     const dbPermission = "readwrite";
     let dbPromise = ReviewsIDbOperationsHelper.openIDb(
       idbName,
@@ -217,5 +216,70 @@ class ReviewsIDbOperationsHelper {
           callback(null, responseObejcts);
         }
       });
+  }
+}
+
+class ReviewsQueueIDBHelper {
+  static checkForIDbSupport() {
+    if (!("indexedDB" in window)) {
+      return 0;
+    } else {
+      return 1;
+    }
+  }
+  static openIDb(name, version, objectStoreName) {
+    const dbPromise = idb.open(name, version, upgradeDB => {
+      upgradeDB.createObjectStore(objectStoreName, { autoIncrement: true });
+    });
+    return dbPromise;
+  }
+  static addToDb(dbPromise, objectStoreName, permision, jsonData) {
+    dbPromise
+      .then(db => {
+        const transact = db.transaction(objectStoreName, permision);
+        //Add all the json content here
+        transact.objectStore(objectStoreName).put(jsonData);
+        //
+        return transact.complete;
+      })
+      .then(response => {
+        console.log("REVIEW SAVED TO LOCAL IDb");
+      });
+  }
+  static getAllData() {
+    const idbName = "reviews-queue";
+    const dbVersion = 1;
+    const objectStoreNameString = "reviews";
+    const transactionNameString = "reviews";
+    const dbPermission = "readwrite";
+    let dbPromise = ReviewsIDbOperationsHelper.openIDb(
+      idbName,
+      dbVersion,
+      objectStoreNameString
+    );
+    //
+    let responseArrayPromise = dbPromise.then(db =>
+      db
+        .transaction(transactionNameString)
+        .objectStore(objectStoreNameString)
+        .getAll()
+    );
+    return responseArrayPromise;
+  }
+  //
+  static queueReviewRequest(jsonRequest) {
+    const idbName = "reviews-queue";
+    const dbVersion = 1;
+    const objectStoreNameString = "reviews";
+    const transactionNameString = "reviews";
+    const dbPermission = "readwrite";
+    let dbPromise = ReviewsIDbOperationsHelper.openIDb(
+      idbName,
+      dbVersion,
+      objectStoreNameString
+    );
+    dbPromise.then(db => {
+      ReviewsQueueIDBHelper.addToDb(dbPromise, objectStoreNameString, dbPermission, jsonRequest);
+    });
   }
 }

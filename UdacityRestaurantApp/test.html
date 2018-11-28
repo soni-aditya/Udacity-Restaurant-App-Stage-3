@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./node_modules/idb/lib/idb.js"></script>
+    <script
+      type="application/javascript"
+      charset="utf-8"
+      src="js/iDbOperationsHelper.js"
+    ></script>
+    <script>
+      var requestPayload = {
+        restaurant_id: 1,
+        name: "Aditya",
+        rating: 3,
+        comments: "Some Feedback"
+      };
+      var jsonRequest = JSON.stringify(requestPayload);
+      // ReviewsQueueIDBHelper.queueReviewRequest(jsonRequest);
+      var arrayResponse = [];
+      async function getArr(){
+          arrayResponse = await ReviewsQueueIDBHelper.getAllData();
+          for(var i =0;i<arrayResponse.length;i++){
+              console.log(JSON.parse(arrayResponse[i]).restaurant_id);
+          }
+      }
+      getArr();
+    </script>
+  </head>
+  <body></body>
+</html>

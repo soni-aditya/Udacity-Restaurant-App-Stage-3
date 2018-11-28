@@ -97,8 +97,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (currentFavouriteStatus == "") {
     currentFavouriteStatus = restaurant.is_favorite;
   }
-  console.log('Current Fav Status : '+currentFavouriteStatus);
-  if (currentFavouriteStatus == 'true') {
+  console.log("Current Fav Status : " + currentFavouriteStatus);
+  if (currentFavouriteStatus == "true") {
     favourite.classList.add("fa");
   } else {
     favourite.classList.add("far");
@@ -234,7 +234,21 @@ createReviewHTML = review => {
   // li.appendChild(name);
 
   const date = document.createElement("p");
-  date.innerHTML = review.createdAt;
+  if (review.createdAt) {
+    date.innerHTML = review.createdAt;
+  } else {
+    var today = new Date();
+    var dateToday =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    var time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = dateToday + " " + time;
+    date.innerHTML = dateTime;
+  }
   date.className = "date-of-review";
   // li.appendChild(date);
   intro_div.appendChild(name);
@@ -276,7 +290,7 @@ getParameterByName = (name, url) => {
   if (!results[2]) return "";
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
-
+///Launching feedback modal
 launchFeedbackModal = () => {
   var modal = document.getElementById("feedbackModal");
   var modalTrigger = document.getElementById("modalTrigger");
@@ -308,17 +322,28 @@ launchFeedbackModal = () => {
       rating: ratingValue,
       comments: feedback
     };
-    fetch("http://localhost:1337/reviews/", {
-      method: "post",
-      body: JSON.stringify(requestPayload)
-    }).then(() => {
-      console.log("Review has been recorded");
-      var dbName = "restaurant-reviews-" + restaurantId;
-      //Delete iDB and reload the page
-      idb.delete(dbName).then(() => {
-        console.log("IDB Deleted");
-        location.reload();
+    //If application is online, make an API call
+    if (navigator.onLine) {
+      fetch("http://localhost:1337/reviews/", {
+        method: "post",
+        body: JSON.stringify(requestPayload)
+      }).then(() => {
+        showSnackBar("Your review has been recorded!");
+        var dbName = "restaurant-reviews-" + restaurantId;
+        //Delete iDB and reload the page
+        idb.delete(dbName).then(() => {
+          console.log("IDB Deleted");
+          location.reload();
+        });
       });
-    });
+    }
+    //If API is offline, save the payload into local IDB storage
+    //Later when system comes online,
+    //make a request to queue requests for all the payloads stored in IDB
+    else {
+      ReviewsQueueIDBHelper.queueReviewRequest(requestPayload);
+      showSnackBar("Your review has been recorded!");
+      location.reload();
+    }
   };
 };
