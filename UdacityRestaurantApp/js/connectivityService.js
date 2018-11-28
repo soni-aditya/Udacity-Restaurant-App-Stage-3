@@ -9,6 +9,7 @@ showSnackBar = messageText => {
 
 checkConnectivityStatus = () => {
   if (navigator.onLine) {
+    //If any request is queued, than Complete those and clear the queue
     sendQueuedRequests = async () => {
       console.log("Making Queued Review requests.");
       var queuedReviews = await ReviewsQueueIDBHelper.getAllData();
@@ -37,47 +38,3 @@ checkConnectivityStatus = () => {
 window.addEventListener("online", checkConnectivityStatus);
 window.addEventListener("offline", checkConnectivityStatus);
 checkConnectivityStatus();
-
-//If any request is queued, than Complete those and clear the queue
-// async function sendQueuedRequests() {
-//   console.log("Making Queued Review requests.");
-//   var queuedReviews = await ReviewsQueueIDBHelper.getAllData();
-//   for (var i = 0; i < queuedReviews.length; i++) {
-//     console.log("review request made");
-//     var thisRestaurantId = JSON.parse(queuedReviews[i].restaurant_id);
-//     fetch("http://localhost:1337/reviews/", {
-//       method: "post",
-//       body: JSON.stringify(queuedReviews[i])
-//     })
-//       .then(() => {
-//         var dbName = "restaurant-reviews-" + thisRestaurantId;
-//         //Delete iDB and reload the page
-//         idb.delete(dbName).then(() => {});
-//       })
-//       .catch(err => console.log(err));
-//   }
-// }
-// sendQueuedRequests().then(() => {
-//   var dbName = "reviews-queue";
-//   // idb.delete(dbName).then(() => {
-//   //   console.log("IDB Deleted");
-//   if (window.location.pathname == "/restaurant.html") {
-//     const idbName = "reviews-queue";
-//     const dbVersion = 1;
-//     const objectStoreNameString = "reviews";
-//     const transactionNameString = "reviews";
-//     const dbPermission = "readwrite";
-//     let dbPromise = ReviewsIDbOperationsHelper.openIDb(
-//       idbName,
-//       dbVersion,
-//       objectStoreNameString
-//     );
-//     dbPromise.then(db => {
-//       idb.delete(dbName).then(() => {
-//         location.reload();
-//       });
-//     });
-//   }
-//   // });
-// });
-//

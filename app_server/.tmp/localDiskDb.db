@@ -212,8 +212,8 @@
           "Sunday": "5:00 pm - 10:00 pm"
         },
         "createdAt": 1504095567191,
-        "updatedAt": 1504095567191,
-        "is_favorite": false,
+        "updatedAt": "2018-11-28T17:21:47.699Z",
+        "is_favorite": "true",
         "id": 9
       },
       {
@@ -927,6 +927,24 @@
         "createdAt": "2018-11-28T17:17:36.678Z",
         "updatedAt": "2018-11-28T17:17:36.678Z",
         "id": 79
+      },
+      {
+        "restaurant_id": "6",
+        "name": "Review Offline",
+        "rating": "5",
+        "comments": "Offlibe",
+        "createdAt": "2018-11-28T17:20:13.891Z",
+        "updatedAt": "2018-11-28T17:20:13.891Z",
+        "id": 80
+      },
+      {
+        "restaurant_id": "9",
+        "name": "Offline review",
+        "rating": "3",
+        "comments": "review offline",
+        "createdAt": "2018-11-28T17:21:28.616Z",
+        "updatedAt": "2018-11-28T17:21:28.616Z",
+        "id": 81
       }
     ]
   },
@@ -982,7 +1000,7 @@
       "id": 12
     },
     "reviews": {
-      "id": 79
+      "id": 81
     }
   }
 }
